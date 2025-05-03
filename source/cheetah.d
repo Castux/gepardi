@@ -24,6 +24,8 @@ class Cheetah
 	float height = 0.0;
 	float vspeed = 0.0;
 
+	bool flip;
+
 	void update(Vector2 playerPos)
 	{
 		auto dt = GetFrameTime();
@@ -44,6 +46,11 @@ class Cheetah
 
 			auto direction = Vector2Normalize(target - position);
 			position += direction * speed * dt;
+
+			auto toPlayer = playerPos - position;
+			auto cross = direction.x * toPlayer.y - direction.y * toPlayer.x;
+
+			flip = cross < 0;
 		}
 
 		// Get new target, close to player
@@ -58,6 +65,6 @@ class Cheetah
 
 	void addBill(MainScene scene)
 	{
-		scene.addBill("gepardi1", Vector3(position.x, height, position.y), 0.7);
+		scene.addBill("gepardi1", Vector3(position.x, height, position.y), 0.7, flip);
 	}
 }
