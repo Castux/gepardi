@@ -1,0 +1,16 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/gepardi
+gepardi.so
+gepardi.dylib
+gepardi.dll
+gepardi.a
+gepardi.lib
+gepardi-test-*
+*.exe
+*.pdb
+*.o
+*.obj
+*.lst
