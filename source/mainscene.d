@@ -67,14 +67,19 @@ class MainScene : Scene
 			cheetahs ~= new Cheetah();
 	}
 
+	Vector2 cpos()
+	{
+		return Vector2(camera.position.x, camera.position.z);
+	}
+
 	private void updateTreePos()
 	{
 		trees = [];
 
 		const dn = 200;
 		const space = 25;
-		int centerx = camera.position.x.floor.to!int;
-		int centery = camera.position.z.floor.to!int;
+		int centerx = cpos.x.floor.to!int;
+		int centery = cpos.y.floor.to!int;
 
 		centerx -= centerx % space;
 		centery -= centery % space;
@@ -97,7 +102,6 @@ class MainScene : Scene
 	void handleTreeCollision()
 	{
 		const margin = 2.0;
-		auto cpos = Vector2(camera.position.x, camera.position.z);
 
 		foreach(t; trees)
 		{
@@ -106,7 +110,7 @@ class MainScene : Scene
 			if (dist < margin)
 			{
 				delta = delta / dist * margin;
-				cpos = t.pos + delta;
+				auto cpos2 = t.pos + delta;
 				camera.position.x = cpos.x;
 				camera.position.z = cpos.y;
 			}
@@ -118,6 +122,9 @@ class MainScene : Scene
 		UpdateCamera(&camera, CameraMode.CAMERA_FIRST_PERSON);
 		updateTreePos();
 		handleTreeCollision();
+
+		foreach(c; cheetahs)
+			c.update(cpos);
 	}
 
 	void addBill(string img, Vector2 pos, double scale, bool flip = false, Color color = Colors.WHITE)
