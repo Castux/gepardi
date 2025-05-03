@@ -18,6 +18,7 @@ struct BillboardInfo
 	Texture2D img;
 	Vector3 pos;
 	double scale;
+	bool flip;
 	Color color;
 	double dist;
 }
@@ -59,11 +60,11 @@ class MainScene : Scene
 	{
 		BillboardInfo[] bills;
 
-		void addBill(string img, Vector2 pos, double scale, Color color = Colors.WHITE)
+		void addBill(string img, Vector2 pos, double scale, bool flip = false, Color color = Colors.WHITE)
 		{
 			auto pos3 = Vector3(pos.x, scale / 2, pos.y);
 			auto dist = Vector3DistanceSqr(pos3, camera.position);
-			bills ~= BillboardInfo(Img(img), pos3, scale, color, dist);
+			bills ~= BillboardInfo(Img(img), pos3, scale, flip, color, dist);
 		}
 
 		addBill("gepardi1", Vector2(0,0), 0.7);
@@ -73,20 +74,21 @@ class MainScene : Scene
 		const dn = 100;
 		const space = 3;
 		int centerx = camera.position.x.floor.to!int;
-		int centery = camera.position.y.floor.to!int;
+		int centery = camera.position.z.floor.to!int;
 
 		centerx -= centerx % 3;
 		centery -= centery % 3;
 
-		foreach(x; iota(centerx - dn, centerx + dn, 3))
-		foreach(y; iota(centery - dn, centery + dn, 3))
+		foreach(x; iota(centerx - dn, centerx + dn, space))
+		foreach(y; iota(centery - dn, centery + dn, space))
 		{
 			auto h1 = hash2d(x, y);
 			auto h2 = hash2d(2 * x, 13 * y) * space / 2;
 			auto h3 = hash2d(27 * x, 87 * y) * space / 2;
+			auto flip = hash2d(7 * x, 19 * y) < 0.5;
 
 			auto size = 0.5 + h3 * 1.7;
-			addBill("grass", Vector2(x + h1, y + h2), size);
+			addBill("grass", Vector2(x + h1, y + h2), size, flip, Palette.yellow);
 		}
 
 		bills.sort!((a,b) => a.dist > b.dist);
@@ -97,7 +99,13 @@ class MainScene : Scene
 			DrawPlane(Vector3(0.0f, 0.0f, 0.0f), Vector2(1024, 1024), Palette.ochre);
 
 			foreach(bill; bills)
-				DrawBillboard(camera, bill.img, bill.pos, bill.scale, Palette.yellow);
+			{
+				auto size = Vector2(bill.scale, bill.scale);
+				auto rec = Rectangle(0, 0, bill.img.width, bill.img.height);
+				if (bill.flip)
+					rec.width *= -1;
+				DrawBillboardRec(camera, bill.img, rec, bill.pos, size, bill.color);
+			}
 
 
 		EndMode3D();
