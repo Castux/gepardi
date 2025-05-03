@@ -105,14 +105,7 @@ class MainScene : Scene
 			auto h3 = hash2d(27 * x, 87 * y) * space / 2;
 			auto flip = hash2d(11 * x, 51 * y) < 0.5;
 
-			string img;
-			switch ((hash2d(13 * x, 61 * y) * 6).floor.to!int)
-			{
-				case 0: case 1: case 2: img = "tree1"; break;
-				case 3: img = "tree2"; break;
-				case 4: img = "tree3"; break;
-				default: img = "tree4"; break;
-			}
+			string img = "tree%d".format([1,1,1,2,3,4][(hash2d(13 * x, 61 * y) * 6).floor.to!int]);
 
 			auto size = 4.5 + h3 * 1.0;
 			addBill(img, Vector2(x + h1, y + h2), size, flip);
