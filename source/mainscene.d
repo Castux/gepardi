@@ -60,7 +60,7 @@ class MainScene : Scene
 	private void addBill(string img, Vector2 pos, double scale, bool flip = false, Color color = Colors.WHITE)
 	{
 		auto pos3 = Vector3(pos.x, scale / 2, pos.y);
-		auto dist = Vector3DistanceSqr(pos3, camera.position);
+		auto dist = Vector2DistanceSqr(pos, Vector2(camera.position.x, camera.position.z));
 		bills ~= BillboardInfo(Img(img), pos3, scale, flip, color, dist);
 	}
 
@@ -90,7 +90,7 @@ class MainScene : Scene
 	private void addTrees()
 	{
 		const dn = 100;
-		const space = 15;
+		const space = 20;
 		int centerx = camera.position.x.floor.to!int;
 		int centery = camera.position.z.floor.to!int;
 
@@ -105,8 +105,17 @@ class MainScene : Scene
 			auto h3 = hash2d(27 * x, 87 * y) * space / 2;
 			auto flip = hash2d(11 * x, 51 * y) < 0.5;
 
-			auto size = 0.5 + h3 * 1.7;
-			addBill("tree1", Vector2(x + h1, y + h2), size, flip);
+			string img;
+			switch ((hash2d(13 * x, 61 * y) * 6).floor.to!int)
+			{
+				case 0: case 1: case 2: img = "tree1"; break;
+				case 3: img = "tree2"; break;
+				case 4: img = "tree3"; break;
+				default: img = "tree4"; break;
+			}
+
+			auto size = 4.5 + h3 * 1.0;
+			addBill(img, Vector2(x + h1, y + h2), size, flip);
 		}
 	}
 
