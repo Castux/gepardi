@@ -134,6 +134,13 @@ class MainScene : Scene
 		bills ~= BillboardInfo(Img(img), pos3, scale, flip, color, dist);
 	}
 
+	void addBill(string img, Vector3 pos, double scale, bool flip = false, Color color = Colors.WHITE)
+	{
+		auto pos3 = Vector3(pos.x, pos.y + scale / 2, pos.z);
+		auto dist = Vector2DistanceSqr(Vector2(pos.x, pos.z), Vector2(camera.position.x, camera.position.z));
+		bills ~= BillboardInfo(Img(img), pos3, scale, flip, color, dist);
+	}
+
 	private void addGrass()
 	{
 		const dn = 100;

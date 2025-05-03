@@ -21,11 +21,8 @@ class Cheetah
 
 	Vector2 position;
 	Vector2 target;
-
-	this()
-	{
-		position = Vector2(uniform(-10, 10), uniform(-10, 10));
-	}
+	float height = 0.0;
+	float vspeed = 0.0;
 
 	void update(Vector2 playerPos)
 	{
@@ -34,6 +31,17 @@ class Cheetah
 		// Get to target
 		if (Vector2Distance(target, position) > 0.5)
 		{
+			if (height <= 0.0)
+			{
+				vspeed = speed * 1.1 + uniform(-0.3, 0.3);
+			}
+			else
+			{
+				vspeed -= 8.0 * dt;
+			}
+
+			height += vspeed * dt;
+
 			auto direction = Vector2Normalize(target - position);
 			position += direction * speed * dt;
 		}
@@ -50,6 +58,6 @@ class Cheetah
 
 	void addBill(MainScene scene)
 	{
-		scene.addBill("gepardi1", position, 0.7);
+		scene.addBill("gepardi1", Vector3(position.x, height, position.y), 0.7);
 	}
 }
