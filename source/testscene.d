@@ -37,6 +37,8 @@ class TestScene : Scene
 		BeginMode3D(camera);
 			DrawPlane(Vector3(0.0f, 0.0f, 0.0f), Vector2(1024, 1024), Palette.ochre);
 			DrawBillboard(camera, Img("gepardi1"), Vector3(0,1,0), 2.0f, Colors.WHITE);
+			DrawBillboard(camera, Img("gepardi1"), Vector3(10,1,0), 2.0f, Colors.WHITE);
+			DrawBillboard(camera, Img("gepardi1"), Vector3(0,1,12), 2.0f, Colors.WHITE);
 		EndMode3D();
 
 
