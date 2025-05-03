@@ -12,6 +12,7 @@ import raylib;
 import interfaces;
 import colors;
 import img;
+import cheetah;
 
 struct BillboardInfo
 {
@@ -21,6 +22,14 @@ struct BillboardInfo
 	bool flip;
 	Color color;
 	double dist;
+}
+
+struct Tree
+{
+	int id;
+	Vector2 pos;
+	bool flip;
+	float size;
 }
 
 const M1 = 1597334677U;     //1719413*929
@@ -41,6 +50,9 @@ class MainScene : Scene
 	Camera3D camera;
 	BillboardInfo[] bills;
 
+	Tree[] trees;
+	Cheetah[] cheetahs;
+
 	this()
 	{
 		camera.position = Vector3(0.0f, 1.75f, 4.0f);    // Camera position
@@ -50,14 +62,46 @@ class MainScene : Scene
 		camera.projection = CameraProjection.CAMERA_PERSPECTIVE;             // Camera projection type
 
 		DisableCursor();
+
+		foreach(_; 0 .. 10)
+			cheetahs ~= new Cheetah();
+	}
+
+	private void updateTreePos()
+	{
+		trees = [];
+
+		const dn = 200;
+		const space = 25;
+		int centerx = camera.position.x.floor.to!int;
+		int centery = camera.position.z.floor.to!int;
+
+		centerx -= centerx % space;
+		centery -= centery % space;
+
+		foreach(x; iota(centerx - dn, centerx + dn, space))
+		foreach(y; iota(centery - dn, centery + dn, space))
+		{
+			auto h1 = hash2d(x, y);
+			auto h2 = hash2d(5 * x, 17 * y) * space / 2;
+			auto h3 = hash2d(27 * x, 87 * y) * space / 2;
+			auto flip = hash2d(11 * x, 51 * y) < 0.5;
+
+			int id = [1,1,1,2,3,4][(hash2d(13 * x, 61 * y) * 6).floor.to!int];
+
+			auto size = 4.5 + h3 * 1.0;
+			trees ~= Tree(id, Vector2(x + h1, y + h2), flip, size);
+		}
 	}
 
 	void update()
 	{
 		UpdateCamera(&camera, CameraMode.CAMERA_FIRST_PERSON);
+		updateTreePos();
+
 	}
 
-	private void addBill(string img, Vector2 pos, double scale, bool flip = false, Color color = Colors.WHITE)
+	void addBill(string img, Vector2 pos, double scale, bool flip = false, Color color = Colors.WHITE)
 	{
 		auto pos3 = Vector3(pos.x, scale / 2, pos.y);
 		auto dist = Vector2DistanceSqr(pos, Vector2(camera.position.x, camera.position.z));
@@ -87,41 +131,17 @@ class MainScene : Scene
 		}
 	}
 
-	private void addTrees()
-	{
-		const dn = 100;
-		const space = 20;
-		int centerx = camera.position.x.floor.to!int;
-		int centery = camera.position.z.floor.to!int;
-
-		centerx -= centerx % space;
-		centery -= centery % space;
-
-		foreach(x; iota(centerx - dn, centerx + dn, space))
-		foreach(y; iota(centery - dn, centery + dn, space))
-		{
-			auto h1 = hash2d(x, y);
-			auto h2 = hash2d(5 * x, 17 * y) * space / 2;
-			auto h3 = hash2d(27 * x, 87 * y) * space / 2;
-			auto flip = hash2d(11 * x, 51 * y) < 0.5;
-
-			string img = "tree%d".format([1,1,1,2,3,4][(hash2d(13 * x, 61 * y) * 6).floor.to!int]);
-
-			auto size = 4.5 + h3 * 1.0;
-			addBill(img, Vector2(x + h1, y + h2), size, flip);
-		}
-	}
-
 	void draw(int width, int height)
 	{
 		bills = [];
 
-		addBill("gepardi1", Vector2(0,0), 0.7);
-		addBill("gepardi1", Vector2(10,0), 0.6);
-		addBill("gepardi1", Vector2(0,12), 0.8);
-
 		addGrass();
-		addTrees();
+
+		foreach(t; trees)
+			addBill("tree" ~ t.id.to!string, t.pos, t.size, t.flip);
+
+		foreach(c; cheetahs)
+			c.addBill(this);
 
 		bills.sort!((a,b) => a.dist > b.dist);
 
