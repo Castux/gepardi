@@ -94,11 +94,30 @@ class MainScene : Scene
 		}
 	}
 
+	void handleTreeCollision()
+	{
+		const margin = 2.0;
+		auto cpos = Vector2(camera.position.x, camera.position.z);
+
+		foreach(t; trees)
+		{
+			auto delta = cpos - t.pos;
+			auto dist = Vector2Length(delta);
+			if (dist < margin)
+			{
+				delta = delta / dist * margin;
+				cpos = t.pos + delta;
+				camera.position.x = cpos.x;
+				camera.position.z = cpos.y;
+			}
+		}
+	}
+
 	void update()
 	{
 		UpdateCamera(&camera, CameraMode.CAMERA_FIRST_PERSON);
 		updateTreePos();
-
+		handleTreeCollision();
 	}
 
 	void addBill(string img, Vector2 pos, double scale, bool flip = false, Color color = Colors.WHITE)
