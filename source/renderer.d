@@ -3,6 +3,7 @@ import std.conv;
 import std.format;
 import std.math;
 import std.stdio;
+import std.string;
 
 import raylib;
 
@@ -11,14 +12,14 @@ class Renderer
 	const initWidth = 800;
 	const initHeight = 600;
 
-	this()
+	this(string title)
 	{
 		SetConfigFlags(ConfigFlags.FLAG_WINDOW_RESIZABLE);
 		SetTraceLogLevel(TraceLogLevel.LOG_WARNING);
 
 		//SetTargetFPS(60);
 
-		InitWindow(initWidth, initHeight, "gepardi");
+		InitWindow(initWidth, initHeight, title.toStringz);
 	}
 
 	~this()

@@ -10,7 +10,7 @@ import renderer;
 
 void main()
 {
-	auto renderer = new Renderer();
+	auto renderer = new Renderer("gepardi");
 
 	while (!WindowShouldClose())
 	{
