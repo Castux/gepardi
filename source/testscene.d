@@ -5,6 +5,7 @@ import std.conv;
 import std.string;
 import std.random;
 import std.algorithm;
+import std.range;
 
 import raylib;
 
@@ -21,6 +22,18 @@ struct BillboardInfo
 	double dist;
 }
 
+const M1 = 1597334677U;     //1719413*929
+const M2 = 3812015801U;     //140473*2467*11
+
+float hash2d(int x, int y)
+{
+	x *= M1;
+	y *= M2;
+
+	uint n = (x ^ y) * M1;
+
+	return n * 1.0 / uint.max;
+}
 
 class TestScene : Scene
 {
@@ -50,18 +63,35 @@ class TestScene : Scene
 	{
 		BillboardInfo[] bills;
 
-		void addBill(string img, Vector3 pos, double scale, Color color = Colors.WHITE)
+		void addBill(string img, Vector2 pos, double scale, Color color = Colors.WHITE)
 		{
-			auto dist = Vector3DistanceSqr(pos, camera.position);
-			bills ~= BillboardInfo(Img(img), pos, scale, color, dist);
+			auto pos3 = Vector3(pos.x, scale / 2, pos.y);
+			auto dist = Vector3DistanceSqr(pos3, camera.position);
+			bills ~= BillboardInfo(Img(img), pos3, scale, color, dist);
 		}
 
-		addBill("gepardi1", Vector3(0,1,0), 0.7);
-		addBill("gepardi1", Vector3(10,1,0), 0.6);
-		addBill("gepardi1", Vector3(0,1,12), 0.8);
+		addBill("gepardi1", Vector2(0,0), 0.7);
+		addBill("gepardi1", Vector2(10,0), 0.6);
+		addBill("gepardi1", Vector2(0,12), 0.8);
 
-		foreach(pos; grassPos)
-			addBill("grass", pos, 2.0);
+		const dn = 100;
+		const space = 3;
+		int centerx = camera.position.x.floor.to!int;
+		int centery = camera.position.y.floor.to!int;
+
+		centerx -= centerx % 3;
+		centery -= centery % 3;
+
+		foreach(x; iota(centerx - dn, centerx + dn, 3))
+		foreach(y; iota(centery - dn, centery + dn, 3))
+		{
+			auto h1 = hash2d(x, y);
+			auto h2 = hash2d(2 * x, 13 * y) * space / 2;
+			auto h3 = hash2d(27 * x, 87 * y) * space / 2;
+
+			auto size = 0.5 + h3 * 1.7;
+			addBill("grass", Vector2(x + h1, y + h2), size);
+		}
 
 		bills.sort!((a,b) => a.dist > b.dist);
 
@@ -71,7 +101,7 @@ class TestScene : Scene
 			DrawPlane(Vector3(0.0f, 0.0f, 0.0f), Vector2(1024, 1024), Palette.ochre);
 
 			foreach(bill; bills)
-				DrawBillboard(camera, bill.img, bill.pos, 2.4f, Palette.yellow);
+				DrawBillboard(camera, bill.img, bill.pos, bill.scale, Palette.yellow);
 
 
 		EndMode3D();
