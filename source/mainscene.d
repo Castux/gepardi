@@ -39,6 +39,7 @@ float hash2d(int x, int y)
 class MainScene : Scene
 {
 	Camera3D camera;
+	BillboardInfo[] bills;
 
 	this()
 	{
@@ -56,28 +57,22 @@ class MainScene : Scene
 		UpdateCamera(&camera, CameraMode.CAMERA_FIRST_PERSON);
 	}
 
-	void draw(int width, int height)
+	private void addBill(string img, Vector2 pos, double scale, bool flip = false, Color color = Colors.WHITE)
 	{
-		BillboardInfo[] bills;
+		auto pos3 = Vector3(pos.x, scale / 2, pos.y);
+		auto dist = Vector3DistanceSqr(pos3, camera.position);
+		bills ~= BillboardInfo(Img(img), pos3, scale, flip, color, dist);
+	}
 
-		void addBill(string img, Vector2 pos, double scale, bool flip = false, Color color = Colors.WHITE)
-		{
-			auto pos3 = Vector3(pos.x, scale / 2, pos.y);
-			auto dist = Vector3DistanceSqr(pos3, camera.position);
-			bills ~= BillboardInfo(Img(img), pos3, scale, flip, color, dist);
-		}
-
-		addBill("gepardi1", Vector2(0,0), 0.7);
-		addBill("gepardi1", Vector2(10,0), 0.6);
-		addBill("gepardi1", Vector2(0,12), 0.8);
-
+	private void addGrass()
+	{
 		const dn = 100;
 		const space = 3;
 		int centerx = camera.position.x.floor.to!int;
 		int centery = camera.position.z.floor.to!int;
 
-		centerx -= centerx % 3;
-		centery -= centery % 3;
+		centerx -= centerx % space;
+		centery -= centery % space;
 
 		foreach(x; iota(centerx - dn, centerx + dn, space))
 		foreach(y; iota(centery - dn, centery + dn, space))
@@ -90,6 +85,41 @@ class MainScene : Scene
 			auto size = 0.5 + h3 * 1.7;
 			addBill("grass", Vector2(x + h1, y + h2), size, flip, Palette.yellow);
 		}
+	}
+
+	private void addTrees()
+	{
+		const dn = 100;
+		const space = 15;
+		int centerx = camera.position.x.floor.to!int;
+		int centery = camera.position.z.floor.to!int;
+
+		centerx -= centerx % space;
+		centery -= centery % space;
+
+		foreach(x; iota(centerx - dn, centerx + dn, space))
+		foreach(y; iota(centery - dn, centery + dn, space))
+		{
+			auto h1 = hash2d(x, y);
+			auto h2 = hash2d(5 * x, 17 * y) * space / 2;
+			auto h3 = hash2d(27 * x, 87 * y) * space / 2;
+			auto flip = hash2d(11 * x, 51 * y) < 0.5;
+
+			auto size = 0.5 + h3 * 1.7;
+			addBill("tree1", Vector2(x + h1, y + h2), size, flip);
+		}
+	}
+
+	void draw(int width, int height)
+	{
+		bills = [];
+
+		addBill("gepardi1", Vector2(0,0), 0.7);
+		addBill("gepardi1", Vector2(10,0), 0.6);
+		addBill("gepardi1", Vector2(0,12), 0.8);
+
+		addGrass();
+		addTrees();
 
 		bills.sort!((a,b) => a.dist > b.dist);
 
