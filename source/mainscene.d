@@ -35,10 +35,9 @@ float hash2d(int x, int y)
 	return n * 1.0 / uint.max;
 }
 
-class TestScene : Scene
+class MainScene : Scene
 {
 	Camera3D camera;
-	Vector3[] grassPos;
 
 	this()
 	{
@@ -47,9 +46,6 @@ class TestScene : Scene
 		camera.up = Vector3(0.0f, 1.0f, 0.0f);          // Camera up vector (rotation towards target)
 		camera.fovy = 60.0f;                                // Camera field-of-view Y
 		camera.projection = CameraProjection.CAMERA_PERSPECTIVE;             // Camera projection type
-
-		foreach(_; 0 .. 1000)
-			grassPos ~= Vector3(uniform(-64.0, 64.0), 1.0, uniform(-64.0, 64.0));
 
 		DisableCursor();
 	}
