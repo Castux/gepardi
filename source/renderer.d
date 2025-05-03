@@ -7,7 +7,9 @@ import std.string;
 
 import raylib;
 
-class Renderer
+import interfaces;
+
+class BasicRenderer : Renderer
 {
 	const initWidth = 800;
 	const initHeight = 600;
@@ -16,7 +18,6 @@ class Renderer
 	{
 		SetConfigFlags(ConfigFlags.FLAG_WINDOW_RESIZABLE);
 		SetTraceLogLevel(TraceLogLevel.LOG_WARNING);
-
 		//SetTargetFPS(60);
 
 		InitWindow(initWidth, initHeight, title.toStringz);
