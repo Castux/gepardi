@@ -7,28 +7,39 @@ import std.string;
 import raylib;
 
 import interfaces;
+import colors;
+import img;
 
 class TestScene : Scene
 {
-	int count = 0;
+	Camera3D camera;
+
+	this()
+	{
+		camera.position = Vector3(0.0f, 2.0f, 4.0f);    // Camera position
+		camera.target = Vector3(0.0f, 2.0f, 0.0f);      // Camera looking at point
+		camera.up = Vector3(0.0f, 1.0f, 0.0f);          // Camera up vector (rotation towards target)
+		camera.fovy = 60.0f;                                // Camera field-of-view Y
+		camera.projection = CameraProjection.CAMERA_PERSPECTIVE;             // Camera projection type
+
+		DisableCursor();
+	}
 
 	void update()
 	{
-		count++;
+		UpdateCamera(&camera, CameraMode.CAMERA_FIRST_PERSON);
 	}
 
 	void draw(int width, int height)
 	{
-		ClearBackground(Colors.SKYBLUE);
+		ClearBackground(Palette.sky);
 
-		DrawCircle(
-			(width / 2.0 + sin(GetTime() / 6.0) * 10.0).to!int,
-			(height / 2.0 + cos(GetTime() / 4.0) * 15.0).to!int,
-			(sin(GetTime() / 6.0) + 1.0) * 20.0,
-			Colors.RED
-		);
-		DrawRectanglePro(Rectangle(40, 40, 20, 20), Vector2(10, 10), GetTime() * 30, Colors.GOLD);
+		BeginMode3D(camera);
+			DrawPlane(Vector3(0.0f, 0.0f, 0.0f), Vector2(1024, 1024), Palette.ochre);
+			DrawBillboard(camera, Img("gepardi1"), Vector3(0,1,0), 2.0f, Colors.WHITE);
+		EndMode3D();
+
+
 		DrawFPS(20, 20);
-		DrawText("Count: %d".format(count).toStringz, 20, 40, 20, Colors.DARKGREEN);
 	}
 }

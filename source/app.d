@@ -9,10 +9,12 @@ import raylib;
 import renderer;
 import interfaces;
 import testscene;
+import img;
 
 void main()
 {
 	auto renderer = new BasicRenderer("gepardi");
+	Img.loadAll();
 	Scene currentScene = new TestScene();
 
 	while (!WindowShouldClose())
