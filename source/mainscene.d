@@ -100,18 +100,17 @@ class MainScene : Scene
 
 	void handleTreeCollision()
 	{
-		const margin = 2.0;
-
 		foreach(t; trees)
 		{
+			auto margin = t.size / 2.3;
 			auto delta = cpos - t.pos;
 			auto dist = Vector2Length(delta);
 			if (dist < margin)
 			{
 				delta = delta / dist * margin;
 				auto cpos2 = t.pos + delta;
-				camera.position.x = cpos.x;
-				camera.position.z = cpos.y;
+				camera.position.x = cpos2.x;
+				camera.position.z = cpos2.y;
 			}
 		}
 	}
