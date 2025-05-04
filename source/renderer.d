@@ -21,6 +21,7 @@ class BasicRenderer : Renderer
 		//SetTargetFPS(60);
 
 		InitWindow(initWidth, initHeight, title.toStringz);
+		InitAudioDevice();
 	}
 
 	~this()

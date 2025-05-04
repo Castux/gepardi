@@ -13,6 +13,8 @@ class Res
 	static const fontPath = "res/Lacquer-Regular.ttf";
 	static Font font;
 
+	static Music music;
+
 	static loadAll()
 	{
 		foreach(path; dirEntries("img", "*.{png,jpg}", SpanMode.shallow))
@@ -22,6 +24,7 @@ class Res
 		}
 
 		font = LoadFontEx(fontPath.toStringz, 90, null, 0);
+		music = LoadMusicStream("res/536200__badoink__14yovi.wav");
 	}
 }
 

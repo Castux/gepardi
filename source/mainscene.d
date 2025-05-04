@@ -143,10 +143,13 @@ class MainScene : Scene
 
 	void updateNextLostCubTime()
 	{
+		// Progressive difficulty: from 1.0 to 0.33
+		auto factor = 1.0 - cheetahs.count!"a.lost".to!double / cheetahs.count / 3.0;
+
 		if (nextLostCub == 0.0)
 			nextLostCub = GetTime() + 5.0;
 		else
-			nextLostCub = GetTime() + cubLoosingRate * uniform(0.5, 1.5);
+			nextLostCub = GetTime() + cubLoosingRate * uniform(0.5, 1.5) * factor;
 
 		writefln("Next lost: %f", nextLostCub);
 	}
@@ -201,6 +204,11 @@ class MainScene : Scene
 
 		if (gameOver && actionButtonDown)
 			resetGame();
+
+		if (!IsMusicStreamPlaying(Res.music))
+			PlayMusicStream(Res.music);
+		else
+			UpdateMusicStream(Res.music);
 	}
 
 	void addBill(string img, Vector2 pos, double scale, bool flip = false, Color color = Colors.WHITE)
