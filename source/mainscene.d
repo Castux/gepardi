@@ -58,6 +58,8 @@ class MainScene : Scene
 	const cubLoosingRate = 10.0;
 	double nextLostCub = 0.0;
 
+	double cubMessageOpacity = 0.0;
+
 	this()
 	{
 		camera.position = Vector3(0.0f, 1.75f, 4.0f);    // Camera position
@@ -140,8 +142,13 @@ class MainScene : Scene
 		{
 			cheetahs.choice.getLost();
 			writeln("Oh no, a cub got lost!");
+
+			cubMessageOpacity = 1.0;
 			updateNextLostCubTime();
 		}
+
+		cubMessageOpacity -= GetFrameTime() * 1.0 / 2.0;
+		if (cubMessageOpacity < 0.0) cubMessageOpacity = 0.0;
 
 		foreach(c; cheetahs)
 			c.update(cpos);
@@ -199,6 +206,24 @@ class MainScene : Scene
 		}
 	}
 
+	const message = "Oh no, a cub got lost!";
+
+	void drawMessage()
+	{
+		if (cubMessageOpacity == 0.0) return;
+
+		const size = 90.0;
+		const spacing = 0.0;
+		auto textSize = MeasureTextEx(Img.font, message.toStringz, size, spacing);    // Measure string size for Font
+
+		auto displaySize = IsWindowFullscreen() ?
+			Vector2(GetRenderWidth(), GetRenderHeight()) :
+			Vector2(GetScreenWidth(), GetScreenHeight());
+
+		auto pos = displaySize / 2.0 - textSize / 2.0;
+		DrawTextEx(Img.font, message.toStringz, pos, size, spacing, ColorAlpha(Palette.blue, cubMessageOpacity));
+	}
+
 	void draw(int width, int height)
 	{
 		bills = [];
@@ -248,6 +273,7 @@ class MainScene : Scene
 		EndMode3D();
 
 		drawLostCubsCounter();
+		drawMessage();
 
 		DrawFPS(20, 20);
 	}
