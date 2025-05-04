@@ -14,6 +14,8 @@ import colors;
 import img;
 import cheetah;
 
+import bill;
+
 struct BillboardInfo
 {
 	Texture2D img;
@@ -175,7 +177,19 @@ class MainScene : Scene
 		ClearBackground(Palette.sky);
 
 		BeginMode3D(camera);
+
 			DrawPlane(Vector3(0.0f, 0.0f, 0.0f), Vector2(1024, 1024), Palette.ochre);
+
+			drawBillboard2(camera, Img("mountain"),
+				camera.position + Vector3(500, 150, -500),
+				300.0,
+				Palette.ochre
+			);
+			drawBillboard2(camera, Img("mountain"),
+				camera.position + Vector3(-200, 100, -300),
+				300.0,
+				Palette.ochre
+			);
 
 			foreach(bill; bills)
 			{
@@ -185,8 +199,6 @@ class MainScene : Scene
 					rec.width *= -1;
 				DrawBillboardRec(camera, bill.img, rec, bill.pos, size, bill.color);
 			}
-
-
 		EndMode3D();
 
 
