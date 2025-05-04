@@ -55,6 +55,9 @@ class MainScene : Scene
 	Tree[] trees;
 	Cheetah[] cheetahs;
 
+	const cubLoosingRate = 10.0;
+	double nextLostCub = 0.0;
+
 	this()
 	{
 		camera.position = Vector3(0.0f, 1.75f, 4.0f);    // Camera position
@@ -67,6 +70,8 @@ class MainScene : Scene
 
 		foreach(_; 0 .. 10)
 			cheetahs ~= new Cheetah();
+
+		updateNextLostCubTime();
 	}
 
 	Vector2 cpos()
@@ -115,11 +120,28 @@ class MainScene : Scene
 		}
 	}
 
+	void updateNextLostCubTime()
+	{
+		if (nextLostCub == 0.0)
+			nextLostCub = GetTime() + 5.0;
+		else
+			nextLostCub = GetTime() + cubLoosingRate * uniform(0.5, 1.5);
+
+		writefln("Next lost: %f", nextLostCub);
+	}
+
 	void update()
 	{
 		UpdateCamera(&camera, CameraMode.CAMERA_FIRST_PERSON);
 		updateTreePos();
 		handleTreeCollision();
+
+		if (GetTime() > nextLostCub)
+		{
+			cheetahs.choice.getLost();
+			writeln("Oh no, a cub got lost!");
+			updateNextLostCubTime();
+		}
 
 		foreach(c; cheetahs)
 			c.update(cpos);
