@@ -182,7 +182,7 @@ class MainScene : Scene
 				notLost.choice.getLost();
 				writeln("Oh no, a cub got lost!");
 
-				cubMessageOpacity = 1.0;
+				setMessage(lostMessage);
 				updateNextLostCubTime();
 			}
 		}
@@ -191,7 +191,11 @@ class MainScene : Scene
 		if (cubMessageOpacity < 0.0) cubMessageOpacity = 0.0;
 
 		foreach(c; cheetahs)
-			c.update(cpos);
+		{
+			auto found = c.update(cpos);
+			if (found)
+				setMessage(foundMessage);
+		}
 
 		checkEndGame();
 
@@ -251,7 +255,15 @@ class MainScene : Scene
 		}
 	}
 
-	const message = "Oh no, a cub got lost!";
+	const lostMessage = "Oh no, a cub got lost!";
+	const foundMessage = "Yay, found!";
+	string message;
+
+	void setMessage(string s)
+	{
+		message = s;
+		cubMessageOpacity = 1.0;
+	}
 
 	void drawMessage()
 	{

@@ -30,7 +30,8 @@ class Cheetah
 
 	bool lost;
 
-	void update(Vector2 playerPos)
+	// return true is cub was found
+	bool update(Vector2 playerPos)
 	{
 		auto dt = GetFrameTime();
 
@@ -86,7 +87,10 @@ class Cheetah
 		{
 			lost = false;
 			writeln("A cub was found!");
+			return true;
 		}
+
+		return false;
 	}
 
 	void addBill(MainScene scene)
