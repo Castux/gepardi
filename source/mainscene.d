@@ -88,8 +88,8 @@ class MainScene : Scene
 	{
 		trees = [];
 
-		const dn = 200;
-		const space = 25;
+		const dn = 400;
+		const space = 30;
 		int centerx = cpos.x.quantize(space).to!int;
 		int centery = cpos.y.quantize(space).to!int;
 
@@ -97,13 +97,13 @@ class MainScene : Scene
 		foreach(y; iota(centery - dn, centery + dn, space))
 		{
 			auto h1 = hash2d(x, y);
-			auto h2 = hash2d(5 * x, 17 * y) * space / 2;
-			auto h3 = hash2d(27 * x, 87 * y) * space / 2;
+			auto h2 = hash2d(5 * x, 17 * y) * space * 0.75;
+			auto h3 = hash2d(27 * x, 87 * y) * space * 0.75;
 			auto flip = hash2d(11 * x, 51 * y) < 0.5;
 
 			int id = [1,1,1,2,3,4][(hash2d(13 * x, 61 * y) * 6).floor.to!int];
 
-			auto size = 4.5 + h3 * 1.0;
+			auto size = 4.5 + h3 * 0.8;
 			trees ~= Tree(id, Vector2(x + h1, y + h2), flip, size);
 		}
 	}
@@ -260,8 +260,9 @@ class MainScene : Scene
 
 		BeginMode3D(camera);
 
-			DrawPlane(Vector3(0.0f, 0.0f, 0.0f), Vector2(1024, 1024), Palette.ochre);
-
+			auto planeCenter = camera.position;
+			planeCenter.y = 0.0;
+			DrawPlane(planeCenter, Vector2(2000, 2000), Palette.ochre);
 
 			drawBillboard3(camera, Img("sun"),
 				camera.position + Vector3(100, 600, 600),
@@ -270,7 +271,7 @@ class MainScene : Scene
 			);
 
 			drawBillboard2(camera, Img("mountain"),
-				camera.position + Vector3(500, 150, -500),
+				camera.position + Vector3(500, 140, -500),
 				300.0,
 				Palette.ochre
 			);
