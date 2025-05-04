@@ -342,7 +342,8 @@ class MainScene : Scene
 		drawMessage();
 		drawGameOver();
 
-		DrawFPS(20, 20);
+		if (IsKeyDown(KeyboardKey.KEY_P))
+			DrawFPS(20, 20);
 	}
 
 	void checkEndGame()
