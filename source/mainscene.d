@@ -6,6 +6,7 @@ import std.string;
 import std.random;
 import std.algorithm;
 import std.range;
+import std.array;
 
 import raylib;
 
@@ -55,7 +56,7 @@ class MainScene : Scene
 	Tree[] trees;
 	Cheetah[] cheetahs;
 
-	const cubLoosingRate = 10.0;
+	const cubLoosingRate = 15.0;
 	double nextLostCub = 0.0;
 
 	double cubMessageOpacity = 0.0;
@@ -63,7 +64,16 @@ class MainScene : Scene
 	const cameraLow = 1.75;
 	const cameraHigh = 3.15;
 
+	bool gameOver;
+	double gameStartTime;
+	double gameOverTime;
+
 	this()
+	{
+		resetGame();
+	}
+
+	void resetGame()
 	{
 		camera.position = Vector3(0.0f, cameraLow, 4.0f);    // Camera position
 		camera.target = Vector3(0.0f, 2.0f, 0.0f);      // Camera looking at point
@@ -73,10 +83,16 @@ class MainScene : Scene
 
 		DisableCursor();
 
+		cheetahs = [];
 		foreach(_; 0 .. 10)
 			cheetahs ~= new Cheetah();
 
+		nextLostCub = 0.0;
 		updateNextLostCubTime();
+
+	 	gameOver = false;
+		gameStartTime = GetTime();
+		gameOverTime = double.nan;
 	}
 
 	Vector2 cpos()
@@ -137,8 +153,7 @@ class MainScene : Scene
 
 	void updateCamera()
 	{
-		auto standing = IsKeyDown(KeyboardKey.KEY_SPACE)
-			|| IsGamepadButtonDown(0, GamepadButton.GAMEPAD_BUTTON_RIGHT_FACE_DOWN);
+		auto standing = actionButtonDown;
 
 		auto target = standing ? cameraHigh : cameraLow;
 		auto delta = (target - camera.position.y) * GetFrameTime() * 8.0;
@@ -152,17 +167,24 @@ class MainScene : Scene
 
 	void update()
 	{
-		updateCamera();
-		updateTreePos();
-		handleTreeCollision();
+		if (!gameOver)
+		{
+			updateCamera();
+			updateTreePos();
+			handleTreeCollision();
+		}
 
 		if (GetTime() > nextLostCub)
 		{
-			cheetahs.choice.getLost();
-			writeln("Oh no, a cub got lost!");
+			auto notLost = cheetahs.filter!"!a.lost".array;
+			if (notLost.length != 0)
+			{
+				notLost.choice.getLost();
+				writeln("Oh no, a cub got lost!");
 
-			cubMessageOpacity = 1.0;
-			updateNextLostCubTime();
+				cubMessageOpacity = 1.0;
+				updateNextLostCubTime();
+			}
 		}
 
 		cubMessageOpacity -= GetFrameTime() * 1.0 / 2.0;
@@ -170,6 +192,11 @@ class MainScene : Scene
 
 		foreach(c; cheetahs)
 			c.update(cpos);
+
+		checkEndGame();
+
+		if (gameOver && actionButtonDown)
+			resetGame();
 	}
 
 	void addBill(string img, Vector2 pos, double scale, bool flip = false, Color color = Colors.WHITE)
@@ -228,7 +255,7 @@ class MainScene : Scene
 
 	void drawMessage()
 	{
-		if (cubMessageOpacity == 0.0) return;
+		if (gameOver || cubMessageOpacity == 0.0) return;
 
 		const size = 90.0;
 		const spacing = 0.0;
@@ -240,6 +267,26 @@ class MainScene : Scene
 
 		auto pos = displaySize / 2.0 - textSize / 2.0;
 		DrawTextEx(Res.font, message.toStringz, pos, size, spacing, ColorAlpha(Palette.blue, cubMessageOpacity));
+	}
+
+	const gameOverMessage = "Oh no, all the cubs are lost!\nScore: %d";
+
+	void drawGameOver()
+	{
+		if (!gameOver) return;
+
+		auto msg = gameOverMessage.format((gameOverTime - gameStartTime).to!int);
+
+		const size = 90.0;
+		const spacing = 0.0;
+		auto textSize = MeasureTextEx(Res.font, msg.toStringz, size, spacing);    // Measure string size for Font
+
+		auto displaySize = IsWindowFullscreen() ?
+			Vector2(GetRenderWidth(), GetRenderHeight()) :
+			Vector2(GetScreenWidth(), GetScreenHeight());
+
+		auto pos = displaySize / 2.0 - textSize / 2.0;
+		DrawTextEx(Res.font, msg.toStringz, pos, size, spacing, Palette.brown);
 	}
 
 	void draw(int width, int height)
@@ -293,7 +340,23 @@ class MainScene : Scene
 
 		drawLostCubsCounter();
 		drawMessage();
+		drawGameOver();
 
 		DrawFPS(20, 20);
+	}
+
+	void checkEndGame()
+	{
+		if (!cheetahs.all!"a.lost" || gameOver)
+			return;
+
+		gameOver = true;
+		gameOverTime = GetTime();
+	}
+
+	bool actionButtonDown()
+	{
+		return IsKeyDown(KeyboardKey.KEY_SPACE)
+			|| IsGamepadButtonDown(0, GamepadButton.GAMEPAD_BUTTON_RIGHT_FACE_DOWN);
 	}
 }

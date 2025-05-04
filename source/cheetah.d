@@ -18,7 +18,7 @@ class Cheetah
 {
 	static const roamRadius = 10.0;
 	static const speed = 3.0;
-	static const getLostRadius = 35.0;
+	static const getLostRadius = 30.0;
 	static const foundRadius = 2.0;
 
 	Vector2 position;
