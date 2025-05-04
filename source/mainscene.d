@@ -78,11 +78,8 @@ class MainScene : Scene
 
 		const dn = 200;
 		const space = 25;
-		int centerx = cpos.x.floor.to!int;
-		int centery = cpos.y.floor.to!int;
-
-		centerx -= centerx % space;
-		centery -= centery % space;
+		int centerx = cpos.x.quantize(space).to!int;
+		int centery = cpos.y.quantize(space).to!int;
 
 		foreach(x; iota(centerx - dn, centerx + dn, space))
 		foreach(y; iota(centery - dn, centery + dn, space))
@@ -145,11 +142,8 @@ class MainScene : Scene
 	{
 		const dn = 100;
 		const space = 3;
-		int centerx = camera.position.x.floor.to!int;
-		int centery = camera.position.z.floor.to!int;
-
-		centerx -= centerx % space;
-		centery -= centery % space;
+		int centerx = camera.position.x.quantize(space).to!int;
+		int centery = camera.position.z.quantize(space).to!int;
 
 		foreach(x; iota(centerx - dn, centerx + dn, space))
 		foreach(y; iota(centery - dn, centery + dn, space))
