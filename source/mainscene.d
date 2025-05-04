@@ -60,9 +60,12 @@ class MainScene : Scene
 
 	double cubMessageOpacity = 0.0;
 
+	const cameraLow = 1.75;
+	const cameraHigh = 3.15;
+
 	this()
 	{
-		camera.position = Vector3(0.0f, 1.75f, 4.0f);    // Camera position
+		camera.position = Vector3(0.0f, cameraLow, 4.0f);    // Camera position
 		camera.target = Vector3(0.0f, 2.0f, 0.0f);      // Camera looking at point
 		camera.up = Vector3(0.0f, 1.0f, 0.0f);          // Camera up vector (rotation towards target)
 		camera.fovy = 60.0f;                                // Camera field-of-view Y
@@ -132,9 +135,24 @@ class MainScene : Scene
 		writefln("Next lost: %f", nextLostCub);
 	}
 
+	void updateCamera()
+	{
+		auto standing = IsKeyDown(KeyboardKey.KEY_SPACE)
+			|| IsGamepadButtonDown(0, GamepadButton.GAMEPAD_BUTTON_RIGHT_FACE_DOWN);
+
+		auto target = standing ? cameraHigh : cameraLow;
+		auto delta = (target - camera.position.y) * GetFrameTime() * 8.0;
+
+		camera.position.y += delta;
+		camera.target.y += delta;
+
+		if (!standing)
+			UpdateCamera(&camera, CameraMode.CAMERA_FIRST_PERSON);
+	}
+
 	void update()
 	{
-		UpdateCamera(&camera, CameraMode.CAMERA_FIRST_PERSON);
+		updateCamera();
 		updateTreePos();
 		handleTreeCollision();
 
