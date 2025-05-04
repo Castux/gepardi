@@ -10,6 +10,19 @@ void drawBillboard2(Camera camera, Texture2D texture, Vector3 position, float sc
 	drawBillboard2Rec(camera, texture, source, position, Vector2(scale*abs(cast(float)source.width/source.height), scale ), tint);
 }
 
+void drawBillboard3(Camera camera, Texture2D texture, Vector3 position, float scale, Color tint)
+{
+	Rectangle source = { 0.0f, 0.0f, cast(float)texture.width, cast(float)texture.height };
+	auto size = Vector2(scale*abs(cast(float)source.width/source.height), scale);
+
+	auto forward = Vector3Normalize(position - camera.position);
+	auto right = Vector3Normalize(Vector3CrossProduct(forward, camera.up));
+	auto up = Vector3Normalize(Vector3CrossProduct(right, forward));
+	auto origin = Vector2Scale(size, 0.5);
+
+	drawBillboard2Pro(camera, texture, source, position, up, size, origin, 0.0, tint);
+}
+
 // Draw a billboard (part of a texture defined by a rectangle)
 void drawBillboard2Rec(Camera camera, Texture2D texture, Rectangle source, Vector3 position, Vector2 size, Color tint)
 {

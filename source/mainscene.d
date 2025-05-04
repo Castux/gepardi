@@ -180,6 +180,13 @@ class MainScene : Scene
 
 			DrawPlane(Vector3(0.0f, 0.0f, 0.0f), Vector2(1024, 1024), Palette.ochre);
 
+
+			drawBillboard3(camera, Img("sun"),
+				camera.position + Vector3(100, 600, 600),
+				200.0,
+				Palette.yellow
+			);
+
 			drawBillboard2(camera, Img("mountain"),
 				camera.position + Vector3(500, 150, -500),
 				300.0,
