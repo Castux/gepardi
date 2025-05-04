@@ -16,10 +16,10 @@ import mainscene;
 
 class Cheetah
 {
-	const roamRadius = 10.0;
-	const speed = 3.0;
-	const getLostRadius = 35.0;
-	const foundRadius = 2.0;
+	static const roamRadius = 10.0;
+	static const speed = 3.0;
+	static const getLostRadius = 35.0;
+	static const foundRadius = 2.0;
 
 	Vector2 position;
 	Vector2 target;
@@ -96,9 +96,11 @@ class Cheetah
 
 	void getLost()
 	{
+		auto a = uniform(0.0, 2.0 * std.math.constants.PI);
+
 		target = Vector2(
-			position.x + uniform(-getLostRadius, getLostRadius),
-			position.y + uniform(-getLostRadius, getLostRadius)
+			position.x + getLostRadius * cos(a),
+			position.y + getLostRadius * sin(a)
 		);
 
 		lost = true;

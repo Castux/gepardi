@@ -112,7 +112,7 @@ class MainScene : Scene
 	{
 		foreach(t; trees)
 		{
-			auto margin = t.size / 2.3;
+			auto margin = Cheetah.foundRadius * 0.8;
 			auto delta = cpos - t.pos;
 			auto dist = Vector2Length(delta);
 			if (dist < margin)
