@@ -181,6 +181,24 @@ class MainScene : Scene
 		}
 	}
 
+	void drawLostCubsCounter()
+	{
+		const width = 60.0;
+		auto img = Img("cubface");
+		auto scale = width / img.width;
+
+		foreach(i; 0 .. cheetahs.count!"a.lost")
+		{
+			DrawTextureEx(
+				Img("cubface"),
+				Vector2((i + 0.5) * width, width * 0.5),
+				rotation: 0.0,
+				scale: scale,
+				Colors.WHITE
+			);
+		}
+	}
+
 	void draw(int width, int height)
 	{
 		bills = [];
@@ -229,6 +247,7 @@ class MainScene : Scene
 			}
 		EndMode3D();
 
+		drawLostCubsCounter();
 
 		DrawFPS(20, 20);
 	}
