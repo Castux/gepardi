@@ -5,7 +5,7 @@ import std.string;
 
 import raylib;
 
-class Img
+class Res
 {
 	const imgDir = "img";
 	static Texture2D[string] textures;
@@ -23,9 +23,9 @@ class Img
 
 		font = LoadFontEx(fontPath.toStringz, 90, null, 0);
 	}
+}
 
-	static opCall(string name)
-	{
-		return textures[name];
-	}
+Texture2D Img(string name)
+{
+	return Res.textures[name];
 }

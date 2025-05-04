@@ -11,7 +11,7 @@ import raylib;
 
 import interfaces;
 import colors;
-import img;
+import res;
 import cheetah;
 
 import bill;
@@ -214,14 +214,14 @@ class MainScene : Scene
 
 		const size = 90.0;
 		const spacing = 0.0;
-		auto textSize = MeasureTextEx(Img.font, message.toStringz, size, spacing);    // Measure string size for Font
+		auto textSize = MeasureTextEx(Res.font, message.toStringz, size, spacing);    // Measure string size for Font
 
 		auto displaySize = IsWindowFullscreen() ?
 			Vector2(GetRenderWidth(), GetRenderHeight()) :
 			Vector2(GetScreenWidth(), GetScreenHeight());
 
 		auto pos = displaySize / 2.0 - textSize / 2.0;
-		DrawTextEx(Img.font, message.toStringz, pos, size, spacing, ColorAlpha(Palette.blue, cubMessageOpacity));
+		DrawTextEx(Res.font, message.toStringz, pos, size, spacing, ColorAlpha(Palette.blue, cubMessageOpacity));
 	}
 
 	void draw(int width, int height)

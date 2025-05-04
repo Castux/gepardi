@@ -11,7 +11,7 @@ import raylib;
 
 import interfaces;
 import colors;
-import img;
+import res;
 import mainscene;
 
 class Cheetah
