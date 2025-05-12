@@ -12,7 +12,6 @@
 	"lflags-linux": [
 		"-rpath=$$ORIGIN"
 	],
-	"description": "A minimal D application.",
 	"name": "gepardi",
 	"dependencies": {
 		"raylib-d": "~>5.5.1"
