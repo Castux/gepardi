@@ -9,7 +9,7 @@ gepardi.dll
 gepardi.a
 gepardi.lib
 gepardi-test-*
-*.exe
+
 *.pdb
 *.o
 *.obj
